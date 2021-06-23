@@ -3,6 +3,7 @@ html, body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    background-color: rgba(0,0,0,0) !important
 }
 
 .hidden {
@@ -108,4 +109,18 @@ div.released {
     to {
         background-color: transparent;
     }
+}
+
+
+#main {
+    margin: 0;
+    height: 100%; 
+}
+
+#res {
+/*    border-bottom: 7px solid white;
+    border-top: 7px solid white;
+    border-right: 7px solid white;
+    border-left: 7px solid white;*/
+    height: 100%;
 }

@@ -4,6 +4,11 @@
     <link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
 <body>
+    <div id="main">
+        <div id="res">
+        </div>
+    </div>
+    <!--
     <div class="mouse">
         <svg xmlns:dc="http://purl.org/dc/elements/1.1/"
              xmlns:cc="http://creativecommons.org/ns#"
@@ -55,9 +60,9 @@
                     <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur20" />
                     <feColorMatrix in="blur20" result="blur-colored" type="matrix"
                                    values="1 0 0 2 0
-                                            0 1 0 2 0
-                                            0 0 1 2 0
-                                            0 0 0 1 0" />
+                                                0 1 0 2 0
+                                                0 0 1 2 0
+                                                0 0 0 1 0" />
                     <feMerge>
                         <feMergeNode in="blur-colored" />
                         <feMergeNode in="SourceGraphic" />
@@ -66,7 +71,7 @@
             </defs>
             <g inkscape:groupmode="layer"
                transform="rotate(90 50 100)
-                translate(-50, -150)"
+                    translate(-50, -150)"
                id="layer2"
                inkscape:label="Layer 2">
                 <path style="fill:none;stroke:#ffffff;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
@@ -128,17 +133,11 @@
             </g>
         </svg>
     </div>
-    <div id="res">
-        <style>
-            {
-                position: absolute;
-                cursor: pointer;
-            }
-        </style>
-    </div>
+    -->
     <script type="text/javascript" src="de engine.js"></script>
     <script type="text/javascript">
+        listenEvents(1);
         listenEvents(2);
     </script>
 </body>
-</html>
+    </html>
