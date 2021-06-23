@@ -1,5 +1,6 @@
 // Key to Icon mapping.  Update these according to your personal key binds.
 // Note that "Num#" is not referring to the numpad - it's referring to the numbers above qwerty.
+// All alphabetical keys begin with "Key_"
 
 var IconKeys = { // This list of actions are only triggered on press, but not on release
     "Mouse5": "/images/punch.png",
@@ -20,24 +21,21 @@ var IconKeys = { // This list of actions are only triggered on press, but not on
     "KeyV": "/images/crucible.png"
 };
 
-var HeldKeys = { // This list of actions are triggered on press and release
+var HeldKeys = { // This list of actions are triggered on press and release.  Make sure the names at the right here match the names at the left on HeldIcons.
     "Mouse2": "altfire",
     "Mouse1": "shoot",
     "Num1": "wepwheel"
 };
 
-var HeldIcons = { // These are the images for the held keys above (make sure the names match), and the numbers here are which row to force these inputs to show up on.
-    "altfire": [0, "/images/startalt.png", "/images/stopalt.png"],
-    "shoot": [1, "/images/startshoot.png", "/images/stopshoot.png"],
-    "wepwheel": [1, "/images/startwheel.png", "/images/stopwheel.png"]
+var HeldIcons = { // These are the images for the held keys above (again, make sure the names match), and the numbers here are which row to force these inputs to show up on.
+    "altfire": ["/images/startalt.png", "/images/stopalt.png", 0],
+    "shoot": ["/images/startshoot.png", "/images/stopshoot.png", 1],
+    "wepwheel": ["/images/startwheel.png", "/images/stopwheel.png", 1]
 };
 
-// Animation Variables. Feel free to change these to your liking
-var frameRate = 60.0; // Make sure to enter this as a float (e.g.: 60.0, 120.0, etc.)
-var imgSpeed = 5; // Distance in pixels to move horizontally per frame
-var iconSize = 40; // Square size of images shown
 var rowSpacing = 2; // How many pixels to have between rows
-var iconFade = true; // if "true", fades out linearly as it reaches the right of the window.  If "false", stays fully opaque from start to finish.
+var iconTimeoutSpeed = 9; // If different icons get squished together, decrease this.  If it feels like icons are being placed in new rows too much, increase this.
+var iconSize = 50; // Square size of images shown.  If you change these, make sure you also tweak .bullet and .bullet.icon in styles.css.
 
 /* 
    ------------------------------------------
@@ -45,12 +43,11 @@ var iconFade = true; // if "true", fades out linearly as it reaches the right of
    ------------------------------------------
 */
 
-// Vars used in calculations
-var frameTime = 1000.0 / frameRate; // time in ms between updates
-var icons = new Array();
-var nextId = 0;
-var rowTimes = new Array(); // keep track of how long until each row is free for use again
+// Vars used to figure out when a row can be used by a different icon.
+var rowCooldown = new Array(); // keep track of how long until each row is free for use again
 var rowContent = new Array(); // keep track of the last image used in each row
+var frameRate = 30.0; // This does not affect the visual animation, so don't worry about increasing it.  It's just for opening up rows to other image types.
+var frameTime = 1000.0 / frameRate; // time in ms between decrementing the counter for determining when a row is open for a different icon type
 
 // Vars dynamically determined via init()
 var opacityEnd;
@@ -65,17 +62,26 @@ function lerp(start, end, t) { // Linear interpolation, used for opacity
 }
 
 function init() {
-
-    heightMax = document.getElementById("res").clientHeight;
-    widthMax = document.getElementById("res").clientWidth;
-    opacityEnd = document.getElementById("res").clientWidth;
-
     reservedRows = 0;
     for (var key in HeldIcons) { // Find out how many rows are reserved by press & release actions
-        if (HeldIcons[key][0] > reservedRows) reservedRows = HeldIcons[key][0];
+        if (HeldIcons[key][2] > reservedRows) reservedRows = HeldIcons[key][2];
+    }
+    manageRowCooldown(); // get the infinite loop running
+}
+
+function manageRowCooldown() {
+    for (var i = 0; i < rowCooldown.length; i++) { // decrement the timer for each row
+        if (rowCooldown[i] > 0) {
+            rowCooldown[i] -= iconTimeoutSpeed;
+            if (rowCooldown[i] <= 0) { // and if the timer hits 0, stop tracking the last content to be placed in that row
+                rowContent[i] = "" // This makes it so that a different icon type can be used in this slot
+            }
+        }
     }
 
-    moveIcons(); // get the infinite loop running
+    setTimeout(function () { // loop at the desired framerate
+        manageRowCooldown()
+    }, frameTime);
 }
 
 function pickRow(src) { // This function is used for one-shot icons that don't have dedicated rows.
@@ -87,93 +93,33 @@ function pickRow(src) { // This function is used for one-shot icons that don't h
     }
 
     if (!foundRow) { // next, just find the first open row.
-        while (rowTimes[rowNum] > 0) rowNum++; 
+        while (rowCooldown[rowNum] > 0) rowNum++; 
     } 
 
-    rowTimes[rowNum] = iconSize; // this counts down in the moveIcons function
-    rowContent[rowNum] = src; // and when rowTimes drops below 1, this is cleared
-    return (rowNum * (iconSize + rowSpacing));
+    rowCooldown[rowNum] = iconSize; // this counts down in the moveIcons function
+    rowContent[rowNum] = src; // and when rowCooldown drops below 1, this is cleared
+    return rowNum;
 }
 
-function createIcon(src) { // This function is used for one-shot icons that don't have dedicated rows.
-    img = new Image();
+function createBullet(src, row) {
+    const bullet = document.createElement("div");
+    const id = '_' + Math.random().toString(36).substr(2, 9);
+    bullet.className = "bullet";
+    bullet.id = id;
+    bullet.style.top = row * (iconSize + rowSpacing) + "px";
+
+    const img = document.createElement("img");
     img.src = src;
+    img.className = "icon";
 
-    var icon = {
-        id: nextId,
-        x: 0,
-        y: pickRow(src),
-        fadeout: iconFade,
-        image: img
-    };
-    icons.push(icon);
-    nextId++;
-}
+    const box = document.querySelector(".res");
+    bullet.appendChild(img);
+    box.appendChild(bullet);
 
-function createIconAtRow(src, row) { // This function is used for press & release icons that have dedicated rows.
-    img = new Image();
-    img.src = src;
+    setTimeout(() => {
+        document.querySelector(`#${id}`).remove();
+    }, 3100);
 
-    var icon = {
-        id: nextId,
-        x: 0,
-        y: row * (iconSize + rowSpacing),
-        fadeout: iconFade,
-        image: img
-    };
-    icons.push(icon);
-    nextId++;
-}
-
-function showIcons() {
-    var node = document.getElementById("res");
-    var stringToInner = "";
-    var src;
-    for (var i = 0; i < icons.length; i++) {
-        src = icons[i].image.src;
-        stringToInner += "<img src =\"" + src +
-            "\" id=\"" + icons[i].id + "\" style= \"left: " +
-            icons[i].x + "px;top: " + icons[i].y + "px;z-index: " +
-            icons[i].id + ";position: absolute;width=\"" + iconSize + "\" height=\"" + iconSize + "\"\">";
-        stringToInner += "<br>";
-    }
-    node.innerHTML = stringToInner;
-}
-
-function moveIcons() {
-    for (var i = 0; i < icons.length; i++) { // go through icon array one by one
-        moveIcon(icons[i]); // and move them
-    }
-
-    for (var i = 0; i < rowTimes.length; i++) { // also, decrement the timer for each row
-        if (rowTimes[i] > 0) {
-            rowTimes[i] -= imgSpeed;
-            if (rowTimes[i] <= 0) { // and if the timer hits 0, stop tracking the last content to be placed in that row
-                rowContent[i] = ""
-            }
-        }
-    }
-
-    setTimeout(function () { // loop at the desired framerate
-        moveIcons()
-    }, frameTime);
-}
-
-function moveIcon(icon) {
-    node = document.getElementById(icon.id);
-    if (icon.x < widthMax - node.width) {
-        node.style.left = icon.x + "px";
-        node.style.top = icon.y + "px";
-        if (icon.fadeout == true) {
-            node.style.opacity = lerp(1, 0, icon.x / opacityEnd);
-//            console.log("Set icon " + icon.id + "'s opacity to: " + lerp(1, 0, icon.x / opacityEnd));
-        }
-        icon.x += imgSpeed;
-    } else {
-        node.style.opacity = 0; // We've hit the edge, so set the opacity to 0
-        icons.splice(0, 1); // and remove it from the array
-        if (icons.length == 0) nextId = 0; // and reset the z index if we don't have anything animating.
-    }
 }
 
 (function () {
@@ -191,19 +137,19 @@ function moveIcon(icon) {
 
             if (data.pressed) { // key/button pressed
                 if (data.button in IconKeys) { // Is this a one-off key press?
-                    createIcon(IconKeys[data.button]);
-                    showIcons();
+                    icon = IconKeys[data.button];
+                    createBullet(icon, pickRow(icon));
                 }
                 if (data.button in HeldKeys) { // Or is it one that we handle press and release separately?
-                    icon = HeldIcons[HeldKeys[data.button]];
-                    createIconAtRow(icon[1], icon[0]);
-                    showIcons();
+                    icon = HeldIcons[HeldKeys[data.button]]; // this icon is an array of [start img, stop img, row position]
+                    createBullet(icon[0], icon[2]);
+
                 }
             }
             else { // key/button released
                 if (data.button in HeldKeys) { // Is it one where we worry about release?
-                    createIconAtRow(icon[2], icon[0]);
-                    showIcons();
+                    icon = HeldIcons[HeldKeys[data.button]]; // this icon is an array of [start img, stop img, row position]
+                    createBullet(icon[1], icon[2]);
                 }
             }
 
