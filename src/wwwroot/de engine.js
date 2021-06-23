@@ -1,8 +1,9 @@
 // Key to Icon mapping.  Update these according to your personal key binds.
 // Note that "Num#" is not referring to the numpad - it's referring to the numbers above qwerty.
-// All alphabetical keys begin with "Key_"
+// See Button.cs for the list of keys supported.
 
 var IconKeys = { // This list of actions are only triggered on press, but not on release
+    "MWheelUp": "/images/punch.png",
     "Mouse5": "/images/punch.png",
     "Ctrl": "/images/dash.png",
     "Alt": "/images/gren.png",

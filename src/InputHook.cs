@@ -150,6 +150,15 @@ namespace Zergatul.Obs.InputOverlay
                         pressed = false;
                         break;
 
+                    case WM_MOUSEWHEEL:
+                        int mousewheelData = Marshal.ReadInt32(lParam + 8);
+                        if (mousewheelData > 0)
+                            button = Button.MWheelUp;
+                        else
+                            button = Button.MWheelDown;
+                        pressed = true;
+                        break;
+                        
                     case WM_XBUTTONDOWN:
                         int mouseData = Marshal.ReadInt32(lParam + 8);
                         switch (mouseData >> 16)
