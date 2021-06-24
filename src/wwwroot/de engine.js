@@ -3,9 +3,9 @@
 // See Button.cs for the list of keys supported.
 
 var IconKeys = { // This list of actions are only triggered on press, but not on release
-    "MWheelUp": "/images/punch.png",
+    "MWheelDown": "/images/punch.png",
     "Mouse5": "/images/punch.png",
-    "Ctrl": "/images/dash.png",
+//    "Ctrl": "/images/dash.png", // Optional.  You could use the movement.html to display dash instead.
     "Alt": "/images/gren.png",
     "Num2": "/images/grenswap.png",
     "KeyX": "/images/modswap.png",

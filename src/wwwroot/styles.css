@@ -37,16 +37,16 @@ div.shift-button,
 div.ctrl-button,
 div.alt-button,
 div.space-button {
-    border: 2px solid white;
-    border-radius: 10px;
+    border: 2px solid transparent;
+    border-radius: 20px;
     color: white;
     display: inline-block;
     font-family: Calibri;
     font-size: 20px;
-    line-height: 40px;
-    height: 40px;
+    line-height: 20px;
+    height: 20px;
     text-align: center;
-    width: 40px;
+    width: 20px;
 }
 
 div.small-button {
@@ -79,18 +79,24 @@ div.space-button {
 }
 
 div.pressed {
-    background-color: #2DA026;
-    box-shadow: 0 0 8px 3px rgba(35, 173, 278, 1);
+    background-color: #2DA02650;
+    box-shadow: 0 0 8px 1px rgba(35, 173, 278, 1);
 }
 
 div.white-space {
     border: 2px solid transparent;
     display: inline-block;
-    width: 40px;
+    width: 20px;
+}
+
+div.small-white-space {
+    border: 2px solid transparent;
+    display: inline-block;
+    width: 30px;
 }
 
 div.line {
-    height: 5px;
+    height: 30px;
 }
 
 div.big-line {
@@ -103,7 +109,7 @@ div.released {
 
 @keyframes key-released {
     from {
-        background-color: #96CF13;
+        background-color: #96CF1350;
     }
 
     to {
@@ -156,4 +162,37 @@ div.released {
         opacity: 0;
         left: 100%;
     }
+}
+
+.movementIcon {
+    position: relative;
+    top: 0px;
+    left: 0px;
+}
+
+.arrow {
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+}
+
+.right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+
+.left {
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+}
+
+.up {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+}
+
+.down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
 }
