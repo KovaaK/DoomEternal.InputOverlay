@@ -51,3 +51,9 @@ This application from Zergatul reads keyboard and mouse inputs, and it runs a we
 
 # Build application from sources
 You can open solution file in Visual Studio 2019. Program is written in C#, by using ASP.NET Core for web server.
+
+# To-do:
+- Add support for more color schemes (generated\decls\uicolor\ has decl files that specify the rgb values under gameresources.resources).
+- Re-work the movement overlay so that engine.js reads from config.js for the movement key config.  Make sure mouse inputs work here too.
+- Center Movement overlay properly.
+- Re-position/re-size Movement overlay so it doesn't block meathook icon on SSG crosshair.
