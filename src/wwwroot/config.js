@@ -2,6 +2,9 @@
 // Note that "Num#" is not referring to the numpad - it's referring to the numbers above qwerty.
 // See Button.cs for the list of keys supported.
 
+// IMPORTANT: After changing keys in this file, save it, then go to OBS and click your 
+// DE Input Overlay source, then click refresh to force it to re - read your config file.
+
 var IconKeys = { // This list of actions are only triggered on press, but not on release
     "KeyE": "/images/punch.png",
 //    "Shift": "/images/dash.png", // Optional.  You could use the movement.html to display dash instead.
