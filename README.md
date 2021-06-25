@@ -22,7 +22,7 @@ There are two OBS sources that you can independently add:
 1. Search for "id=" and change any inputs there as necessary.  Defaults are WASD to move, Shift to dash, and Space to Jump.
 
 # Basic usage
-1. Run `DoomEternal.InputOverlay.exe`, and keep it open while you want to use input overlay in OBS
+1. Run `Zergatul.Obs.InputOverlay.exe`, and keep it open while you want to use input overlay in OBS
 1. In OBS, add Source 🡒 Browser.
     - Name it something like "DE Input Overlay"
     - `URL`: `http://localhost:5001/de.html`
